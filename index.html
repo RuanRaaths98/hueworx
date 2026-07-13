@@ -164,12 +164,20 @@
           />
         </div>
 
-        <form class="booking-form" id="bookingForm" novalidate>
+        <form
+          class="booking-form"
+          id="bookingForm"
+          action="https://formspree.io/f/xqegwjld"
+          method="POST"
+          novalidate
+        >
           <p class="eyebrow">Check availability</p>
           <h2>Request your date</h2>
           <p class="form-intro">
-            Placeholder form for now. Connect this to your booking system when ready.
+            Send your details and we’ll confirm availability within 24-48 hours.
           </p>
+          <input type="hidden" name="_subject" value="New Hueworx engagement shoot request" />
+          <input type="hidden" name="offer" value="Engagement shoot with free anniversary shoot" />
 
           <div class="form-row">
             <label for="partnerOne">Your name</label>

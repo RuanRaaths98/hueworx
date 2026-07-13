@@ -1,6 +1,7 @@
 const form = document.querySelector("#bookingForm");
 const statusEl = document.querySelector("#formStatus");
 const dateInputs = document.querySelectorAll('input[type="date"]');
+const thankYouPage = "thank-you.html";
 
 const today = new Date();
 const localToday = new Date(today.getTime() - today.getTimezoneOffset() * 60000)
@@ -51,6 +52,30 @@ function validateForm() {
   return isValid;
 }
 
+async function submitToFormspree(submitButton) {
+  const formData = new FormData(form);
+
+  const response = await fetch(form.action, {
+    method: "POST",
+    body: formData,
+    headers: {
+      Accept: "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Form submission failed.");
+  }
+
+  if (window.fbq) {
+    window.fbq("track", "Lead");
+  }
+
+  submitButton.textContent = "Request Sent";
+  statusEl.textContent = "Taking you to the confirmation page.";
+  window.location.href = thankYouPage;
+}
+
 if (form) {
   form.addEventListener("input", (event) => {
     if (event.target.matches("input, textarea")) {
@@ -58,7 +83,7 @@ if (form) {
     }
   });
 
-  form.addEventListener("submit", (event) => {
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
     statusEl.textContent = "";
 
@@ -69,9 +94,15 @@ if (form) {
 
     const submitButton = form.querySelector(".submit-button");
     submitButton.disabled = true;
-    submitButton.textContent = "Request Sent";
-    statusEl.textContent = "Taking you to the confirmation page.";
+    submitButton.textContent = "Sending...";
+    statusEl.textContent = "Sending your request.";
 
-    window.location.href = "thank-you.html";
+    try {
+      await submitToFormspree(submitButton);
+    } catch (error) {
+      submitButton.disabled = false;
+      submitButton.textContent = "Request date";
+      statusEl.textContent = "Something went wrong. Please try again.";
+    }
   });
 }
