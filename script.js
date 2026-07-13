@@ -2,6 +2,7 @@ const form = document.querySelector("#bookingForm");
 const statusEl = document.querySelector("#formStatus");
 const dateInputs = document.querySelectorAll('input[type="date"]');
 const thankYouPage = "thank-you.html";
+const formspreeEndpoint = form?.dataset.formspreeEndpoint;
 
 const today = new Date();
 const localToday = new Date(today.getTime() - today.getTimezoneOffset() * 60000)
@@ -55,7 +56,7 @@ function validateForm() {
 async function submitToFormspree(submitButton) {
   const formData = new FormData(form);
 
-  const response = await fetch(form.action, {
+  const response = await fetch(formspreeEndpoint, {
     method: "POST",
     body: formData,
     headers: {
@@ -98,6 +99,10 @@ if (form) {
     statusEl.textContent = "Sending your request.";
 
     try {
+      if (!formspreeEndpoint) {
+        throw new Error("Missing Formspree endpoint.");
+      }
+
       await submitToFormspree(submitButton);
     } catch (error) {
       submitButton.disabled = false;
